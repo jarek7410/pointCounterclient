@@ -1,26 +1,62 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {View,Text} from "react-native";
-import {Button, TextInput} from "react-native-paper";
+import {ActivityIndicator, Button, HelperText, TextInput} from "react-native-paper";
 import SignInUpTextInput from "../components/SignInUpTextInput";
 import Spacer from "../components/spacer";
+import {checkPasswordStrength} from "../helpers/RegisterHelpers";
+import {log} from "expo/build/devtools/logger";
+import * as assert from "assert";
+import {registerDto} from "../helpers/dto/register.dto";
 
 export const Register = ({navigation})=>{
     const [email, setEmail] = useState<string>();
     const [nick , setNick] = useState<string>();
     const [password, setPassword] = useState<string>();
     const [repassword, setRepassword] = useState<string>();
-    const register = () => {
-        fetch('http://localhost:2137/register', {
+    const [validPassword, setValidPassword] = useState<boolean>(false);
+    const [ValidPasswordText, setValidPasswordText] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const [response, setResponse] = useState<string>();
+    useEffect(() => {
+        console.log("register")
+    }, []);
+    const register =async () => {
+        // if (password != undefined && password.length > 0) {
+        //     const check = checkPasswordStrength(password)
+        //     if(check.isStrong){
+        //         setValidPassword(true)
+        //     }else{
+        //         setValidPassword(false)
+        //         setValidPasswordText(check.reasons.join(","))
+        //         return
+        //     }
+        // }
+        // if(validator.isEmail(email)){
+        //     setEmail("not valid email")
+        //     return;
+        // }
+        // setLoading(true)
+        //TODO: change to hash password\
+        //TODO: validate email
+        //TODO: handle errors
+        //TODO: user store/env for fetch url
+        const response=await fetch('http://192.168.0.113:2137/auth/user/register/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 email: email,
-                nick: nick,
+                username: nick,
                 password: password,
             }),
-        }).then(r => {})
+        })
+        const data:registerDto = await response.json();
+        const jsonString = JSON.stringify(data);
+        console.log(jsonString)
+        console.log(data.user)
+        navigation.goBack();
     }
     const onEmailChange = (e) => {
         setEmail(e);
@@ -47,6 +83,9 @@ export const Register = ({navigation})=>{
                 label="Nick"
                 value={nick}
                 onChangeText={(text: string) => onNickChange(text)} placeholder={"Nick"}/>
+            <HelperText type="error" visible={!validPassword}>
+                {ValidPasswordText}
+            </HelperText>
             <SignInUpTextInput
                 label="Password"
                 value={password}
@@ -61,8 +100,19 @@ export const Register = ({navigation})=>{
                     secureTextEntry
                 />
             }
-            <Spacer height={100}/>
-            <Button mode="contained" onPress={register}>Register</Button>
+            <HelperText type="error" visible={repassword!==password&&repassword!==undefined&&repassword.length>0}>
+                repeated password is not the same
+            </HelperText>
+            <Spacer height={50}/>
+            {loading&&
+                <ActivityIndicator animating={true} size={"large"}/>
+            }
+            {repassword===password&&!loading&&
+                <Button mode="contained" onPress={register}>Register</Button>
+            }
+            <Text>
+                {response}
+            </Text>
         </View>
     )
 }
