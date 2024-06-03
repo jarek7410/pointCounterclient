@@ -16,7 +16,7 @@ export const HelloWorld = ({text="hello World",navigation}) => {
             <View>
                 <Button mode="contained" onPress={()=>navigation.navigate(Screens.Register)}>register</Button>
                 <Spacer height={10}/>
-                <Button mode={"contained"} disabled>login</Button>
+                <Button mode={"contained"} onPress={()=>navigation.navigate(Screens.Login)}>login</Button>
             </View>
             <Text>This is bottom text.</Text>
         </SafeAreaView>

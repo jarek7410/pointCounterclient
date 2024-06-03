@@ -23,7 +23,6 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
       <PaperProvider>
-      {/*// <Text>hello</Text>*/}
       <NavigationContainer>
         <Stack.Navigator
             initialRouteName={Screens.Home}
@@ -32,7 +31,7 @@ function App() {
             <Stack.Screen name={Screens.Home} component={HelloWorld} options={{text:"home",navigation:Stack}}  />
 
             <Stack.Screen name={Screens.Register} component={Register} options={{navigation:Stack}}/>
-            <Stack.Screen name={Screens.Login} component={SignIn} />
+            <Stack.Screen name={Screens.Login} component={SignIn} options={{navigation:Stack}}/>
 
         </Stack.Navigator>
       </NavigationContainer>
