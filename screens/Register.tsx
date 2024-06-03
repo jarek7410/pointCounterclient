@@ -53,8 +53,10 @@ export const Register = ({navigation})=>{
             }),
         })
         const data:registerDto = await response.json();
+        //TODO: delete this
         const jsonString = JSON.stringify(data);
         console.log(jsonString)
+
         console.log(data.user)
         navigation.goBack();
     }

@@ -10,6 +10,8 @@ export const SignIn = ({navigation})=>{
     const [password,setPassword] = React.useState<string>('')
     const [loading,setLoading] = React.useState<boolean>(false)
 
+    //TODO: hash password
+    //TODO: error handling
     const login = async () => {
         setLoading(true)
         const response=await fetch('http://192.168.0.113:2137/auth/user/login/', {
