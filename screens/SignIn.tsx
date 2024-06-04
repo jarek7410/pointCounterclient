@@ -5,6 +5,7 @@ import SignInUpTextInput from "../components/SignInUpTextInput";
 import Spacer from "../components/spacer";
 import {loginDto} from "../helpers/dto/login.dto";
 import {AuthContext} from "../helpers/context/Auth";
+import {EnvContext} from "../helpers/context/env";
 
 export const SignIn = ({navigation})=>{
     const [username,setUsername] = React.useState<string>('')
@@ -12,12 +13,14 @@ export const SignIn = ({navigation})=>{
     const [loading,setLoading] = React.useState<boolean>(false)
 
     const auth=useContext(AuthContext)
+    const env=useContext(EnvContext)
 
     //TODO: hash password
     //TODO: error handling
     const login = async () => {
         setLoading(true)
-        const response=await fetch('http://192.168.0.113:2137/auth/user/login/', {
+        // console.log(env.api.url+':'+env.api.port+'/auth/user/login/')
+        const response=await fetch(env.api.url+':'+env.api.port+'/auth/user/login/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -28,16 +31,16 @@ export const SignIn = ({navigation})=>{
             }),
         })
         if(!response.ok){
+            const err=await response.json()
+            console.log("error:"+response.status+" "+err.error)
             setLoading(false)
             return
         }
         const data:loginDto = await response.json();
-        const jsonString = JSON.stringify(data);
 
         auth.Update(data.username,data.token)
+        console.log("from auth:"+auth.username)
 
-        console.log(response.status)
-        console.log(jsonString)
         navigation.goBack()
     }
     return(

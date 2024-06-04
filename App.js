@@ -7,17 +7,21 @@ import {SignIn} from "./screens/SignIn";
 import {Screens} from "./helpers/screens.enum";
 import {PaperProvider} from "react-native-paper";
 import {AuthContext} from "./helpers/context/Auth";
-import {useRef, useState} from "react";
-import Config from "react-native-config";
-import {EnvDto} from "./helpers/dto/env.dto";
+import {useEffect, useState} from "react";
 import {EnvContext} from "./helpers/context/env";
 
 
 const Stack = createNativeStackNavigator();
 
 function App() {
-    const [token,setToken]=useState<string>(null)
-    const [username,setUsername]=useState<string>(null)
+    const [token,setToken]=useState("")
+    const [username,setUsername]=useState("")
+    const [env,setEnv]=useState()
+    useEffect(() => {
+        // console.log("try get env!!!")
+        //learn how to make env work
+        setEnv({api:{url:"http://192.168.0.220",port:"2137"}})
+    }, []);
     const updateAuth=(name,token)=>{
         setToken(token)
         setUsername(name)
@@ -25,10 +29,7 @@ function App() {
     }
 
   return (
-      <EnvContext.Provider value={{api:{
-              url:Config.API_URL,
-              port:Config.API_PORT
-          },}}>
+      <EnvContext.Provider value={env}>
       <AuthContext.Provider value={{username:username,token:token,Update:updateAuth}}>
       <PaperProvider>
       <NavigationContainer>

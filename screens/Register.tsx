@@ -1,12 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {createRef, useContext, useEffect, useRef, useState} from "react";
 import {View,Text} from "react-native";
 import {ActivityIndicator, Button, HelperText, TextInput} from "react-native-paper";
 import SignInUpTextInput from "../components/SignInUpTextInput";
 import Spacer from "../components/spacer";
-import {checkPasswordStrength} from "../helpers/RegisterHelpers";
-import {log} from "expo/build/devtools/logger";
-import * as assert from "assert";
 import {registerDto} from "../helpers/dto/register.dto";
+import {EnvContext} from "../helpers/context/env";
 
 export const Register = ({navigation})=>{
     const [email, setEmail] = useState<string>();
@@ -16,12 +14,15 @@ export const Register = ({navigation})=>{
     const [validPassword, setValidPassword] = useState<boolean>(false);
     const [ValidPasswordText, setValidPasswordText] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
-
     const [response, setResponse] = useState<string>();
+
+    const env = useContext(EnvContext)
+
     useEffect(() => {
         console.log("register")
     }, []);
     const register =async () => {
+        setLoading(true)
         // if (password != undefined && password.length > 0) {
         //     const check = checkPasswordStrength(password)
         //     if(check.isStrong){
@@ -36,12 +37,11 @@ export const Register = ({navigation})=>{
         //     setEmail("not valid email")
         //     return;
         // }
-        // setLoading(true)
         //TODO: change to hash password\
         //TODO: validate email
         //TODO: handle errors
         //TODO: user store/env for fetch url
-        const response=await fetch('http://192.168.0.113:2137/auth/user/register/', {
+        const response=await fetch(env.api.url+':'+env.api.port+'/auth/user/register/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,10 +52,12 @@ export const Register = ({navigation})=>{
                 password: password,
             }),
         })
+        if(!response.ok){
+            setLoading(false)
+            setResponse("Error: "+response.status)
+            return
+        }
         const data:registerDto = await response.json();
-        //TODO: delete this
-        const jsonString = JSON.stringify(data);
-        console.log(jsonString)
 
         console.log(data.user)
         navigation.goBack();
