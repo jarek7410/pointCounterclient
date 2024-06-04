@@ -1,14 +1,17 @@
-import React from "react";
+import React, {useContext} from "react";
 import {View,Text} from "react-native";
 import {ActivityIndicator, Button} from "react-native-paper";
 import SignInUpTextInput from "../components/SignInUpTextInput";
 import Spacer from "../components/spacer";
 import {loginDto} from "../helpers/dto/login.dto";
+import {AuthContext} from "../helpers/context/Auth";
 
 export const SignIn = ({navigation})=>{
     const [username,setUsername] = React.useState<string>('')
     const [password,setPassword] = React.useState<string>('')
     const [loading,setLoading] = React.useState<boolean>(false)
+
+    const auth=useContext(AuthContext)
 
     //TODO: hash password
     //TODO: error handling
@@ -24,12 +27,18 @@ export const SignIn = ({navigation})=>{
                 password: password,
             }),
         })
+        if(!response.ok){
+            setLoading(false)
+            return
+        }
         const data:loginDto = await response.json();
         const jsonString = JSON.stringify(data);
+
+        auth.Update(data.username,data.token)
+
         console.log(response.status)
         console.log(jsonString)
-        setLoading(false)
-
+        navigation.goBack()
     }
     return(
         <View style={{
