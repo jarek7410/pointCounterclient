@@ -2,5 +2,6 @@ export enum Screens {
     Home="Home",
     Login="Login",
     Register="Register",
-    RoomCreate="CreateRoom"
+    RoomCreate="CreateRoom",
+    RoomList="ListRoom",
 }

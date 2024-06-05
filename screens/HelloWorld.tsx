@@ -13,11 +13,14 @@ export const HelloWorld = ({text="hello World",navigation}) => {
     return (
         <SafeAreaView
         >
-            <Text>This is top text.</Text>
-            <Text>{text}</Text>
+            {/*<Text>This is top text.</Text>*/}
+            {/*<Text>{text}</Text>*/}
             <View>
+                <Button mode={"contained"} onPress={()=>{navigation.navigate(Screens.RoomList)}}>List Room</Button>
+                <Spacer height={10}/>
             {auth.Uid===-1&&
                 <>
+                    <Spacer height={50}/>
                 <Button mode="contained" onPress={()=>navigation.navigate(Screens.Register)}>register</Button>
                 <Spacer height={10}/>
                 <Button mode={"contained"} onPress={()=>navigation.navigate(Screens.Login)}>login</Button>
@@ -31,7 +34,7 @@ export const HelloWorld = ({text="hello World",navigation}) => {
                 </>
             }
             </View>
-            <Text>This is bottom text.</Text>
+            {/*<Text>This is bottom text.</Text>*/}
         </SafeAreaView>
     )
 }

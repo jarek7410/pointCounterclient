@@ -10,7 +10,9 @@ import {AuthContext} from "./helpers/context/Auth";
 import {useEffect, useState} from "react";
 import {EnvContext} from "./helpers/context/env";
 import {EnvDto} from "./helpers/dto/env.dto";
-import {CreateRoom} from "./screens/CreateRoom";
+import {CreateRoom} from "./screens/room/CreateRoom";
+import {RoomDto} from "./helpers/dto/room/room.dto";
+import {ListRoom} from "./screens/room/ListRoom";
 
 
 const Stack = createNativeStackNavigator();
@@ -21,10 +23,11 @@ function App() {
     const [uid,setUid] = useState(-1)
     const [bearer,setBearer]=useState<string>("")
     const [env,setEnv]=useState<EnvDto>()
+    const [room,setRoom]=useState<RoomDto>(null)
     useEffect(() => {
         // console.log("try get env!!!")
         //learn how to make env work
-        setEnv({api:{url:"http://192.168.0.206",port:"2137"}})
+        setEnv({api:{url:"http://192.168.0.220",port:"2137"}})
     }, []);
     const updateAuth=(name,token,uid)=>{
         setToken(token)
@@ -34,9 +37,21 @@ function App() {
         console.log(name)
     }
 
+    function setCurrentRoom(room:RoomDto) {
+        setRoom(room)
+
+    }
+
     return (
         <EnvContext.Provider value={env}>
-        <AuthContext.Provider value={{username:username,token:token,Uid:uid,bearer:bearer,Update:updateAuth}}>
+        <AuthContext.Provider value={{
+            room:room,
+            SetNewestRoom:setCurrentRoom,
+            username:username,
+            token:token,
+            Uid:uid,
+            bearer:bearer,
+            Update:updateAuth}}>
     <PaperProvider>
         <NavigationContainer>
             <Stack.Navigator
@@ -44,7 +59,7 @@ function App() {
     screenOptions={{ headerShown: true }}
 >
     <Stack.Screen name={Screens.Home} component={HelloWorld} options={{text:"home",navigation:Stack}}  />
-
+    <Stack.Screen name={Screens.RoomList} component={ListRoom} options={{navigation: Stack}}/>
     {uid===-1&&
     <>
         <Stack.Screen name={Screens.Register} component={Register} options={{navigation:Stack}}/>

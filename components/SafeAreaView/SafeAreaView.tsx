@@ -7,7 +7,7 @@ export const SafeAreaView = ({children}) => {
         <View
             style={{
                 flex: 1,
-                justifyContent: 'space-between',
+                justifyContent: 'center',
                 alignItems: 'center',
 
                 // Paddings to handle safe area
