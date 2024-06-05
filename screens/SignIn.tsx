@@ -6,6 +6,10 @@ import Spacer from "../components/spacer";
 import {loginDto} from "../helpers/dto/login.dto";
 import {AuthContext} from "../helpers/context/Auth";
 import {EnvContext} from "../helpers/context/env";
+import {userDataDto} from "../helpers/dto/authData.dto";
+import {Simulate} from "react-dom/test-utils";
+import compositionStart = Simulate.compositionStart;
+import {Screens} from "../helpers/screens.enum";
 
 export const SignIn = ({navigation})=>{
     const [username,setUsername] = React.useState<string>('')
@@ -32,16 +36,38 @@ export const SignIn = ({navigation})=>{
         })
         if(!response.ok){
             const err=await response.json()
-            console.log("error:"+response.status+" "+err.error)
+            console.log("login error:"+response.status+" "+err.error)
             setLoading(false)
             return
         }
         const data:loginDto = await response.json();
+        const bearer="Bearer "+data.token
+        // console.log(bearer)bearer
+        //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlYXQiOjE3MTc1MjAwOTIsImlhdCI6MTcxNzUxODI5MiwiaWQiOjI4LCJyb2xlIjozfQ.JExW-uOk9zABVIoaDhJzTTd43hcvcVwGrYEjhSAFXiY
+        //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlYXQiOjE3MTMyNjg1MTgsImlhdCI6MTcxMzI2NjcxOCwiaWQiOjMsInJvbGUiOjF9.KO42xVPoUaFt8bZsAvYQCPmw30XCmJtwDTqtxs1fZ-U
+        const responseUser=await fetch(env.api.url+':'+env.api.port+'/api/me/', {
+            method: 'GET',
+            headers: {
+                'Authorization': bearer,
+                'Content-Type': 'application/json'
+            },
+        })
+        if(!responseUser.ok){
+            console.log("me error:"+responseUser.status)
+            setLoading(false)
+            return
+        }
+        const dataUser=await responseUser.json()
+        console.log("???")
+        const stringify=JSON.stringify(dataUser)
+        console.log("???")
+        console.log(stringify)
+        console.log("???")
 
-        auth.Update(data.username,data.token)
+        auth.Update(data.username,data.token,dataUser.ID)
         console.log("from auth:"+auth.username)
 
-        navigation.goBack()
+        navigation.goBack(Screens.Home)
     }
     return(
         <View style={{

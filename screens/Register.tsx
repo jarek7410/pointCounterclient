@@ -5,6 +5,9 @@ import SignInUpTextInput from "../components/SignInUpTextInput";
 import Spacer from "../components/spacer";
 import {registerDto} from "../helpers/dto/register.dto";
 import {EnvContext} from "../helpers/context/env";
+import {Screens} from "../helpers/screens.enum";
+import {checkPasswordStrength} from "../helpers/RegisterHelpers";
+// import validator from "validator";
 
 export const Register = ({navigation})=>{
     const [email, setEmail] = useState<string>();
@@ -23,16 +26,16 @@ export const Register = ({navigation})=>{
     }, []);
     const register =async () => {
         setLoading(true)
-        // if (password != undefined && password.length > 0) {
-        //     const check = checkPasswordStrength(password)
-        //     if(check.isStrong){
-        //         setValidPassword(true)
-        //     }else{
-        //         setValidPassword(false)
-        //         setValidPasswordText(check.reasons.join(","))
-        //         return
-        //     }
-        // }
+        if (password != undefined && password.length > 0) {
+            const check = checkPasswordStrength(password)
+            if(check.isStrong){
+                setValidPassword(true)
+            }else{
+                setValidPassword(false)
+                setValidPasswordText(check.reasons.join(","))
+                return
+            }
+        }
         // if(validator.isEmail(email)){
         //     setEmail("not valid email")
         //     return;
@@ -60,7 +63,7 @@ export const Register = ({navigation})=>{
         const data:registerDto = await response.json();
 
         console.log(data.user)
-        navigation.goBack();
+        navigation.navigate(Screens.Login);
     }
     const onEmailChange = (e) => {
         setEmail(e);
